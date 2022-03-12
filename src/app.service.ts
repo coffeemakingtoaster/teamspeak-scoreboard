@@ -17,8 +17,6 @@ export class AppService {
 
   async getLeaderByConnectiontime(amount: number): Promise<Client[]>{
     this.logger.debug(`Getting top ${amount} clients from database`)
-    //TODO: Implement this
-    return [{name: "test1", minutes: 11, teamspeakID: "123"},{name: "test2", minutes: 10, teamspeakID: "223"}]
+    return await this.clientModel.find().sort({minutes: -1}).limit(amount)  
   }
-  
 }
