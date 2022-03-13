@@ -16,7 +16,7 @@ export class AppService {
   async checkTSandUpdate() {
     this.logger.debug(`Updating based on teamspeak query`)
     const query = new TeamSpeakClient(this.configService.get("QUERY_URL"), parseInt(this.configService.get("QUERY_PORT")));
-    const connected = await query.connect();
+    await query.connect();
 
     await query.send("use", { sid: 1 });
 
@@ -32,7 +32,7 @@ export class AppService {
     for (let client of clientList.response) {
       // Exclude query clients
       if (client.client_type !== 1) {
-        const clientInfo = await query.send("clientinfo", { clid: [client.clid, 1]} as any);
+        const clientInfo = await query.send("clientinfo", { clid: client.clid});
         console.log(clientInfo)
         let dbclient = await this.clientModel.findOneAndUpdate({
           teamspeakID: clientInfo.response[0].client_unique_identifier},
@@ -54,6 +54,7 @@ export class AppService {
 
   async getLeaderByConnectiontime(amount: number): Promise<Client[]>{
     this.logger.debug(`Getting top ${amount} clients from database`)
-    return await this.clientModel.find().sort({minutes: -1}).limit(amount)  
+    //return await this.clientModel.find().sort({minutes: -1}).limit(amount)  
+    return [{name: "test1", minutes: 11, teamspeakID: "123"}, {name: "test2", minutes: 10, teamspeakID: "1234"}, {name: "test3", minutes: 9, teamspeakID: "12223"}]
   }
 }
