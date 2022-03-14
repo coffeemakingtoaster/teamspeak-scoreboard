@@ -1,5 +1,76 @@
-<ol type="1">
-<% clients.forEach((client) => { %>
-    <li><%=client.name%> (<%=client.minutes %>Min)</li>
-<% }) %>
-</ol>
+<header>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Rubik:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-family: 'Rubik', sans-serif;
+            text-align: center;
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: #306eb6;
+        }
+
+        .leaderboard-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .leaderboard-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: 'Poppins', sans-serif;
+            font-family: 'Rubik', sans-serif;
+            color: white;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .leaderboard-table thead tr {
+            color: #306eb6;
+            background-color: black;
+            text-align: left;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 12px 15px;
+        }
+    </style>
+</header>
+
+<h1>HiloHDLP Teamspeak Leaderboard</h1>
+<div class="leaderboard-container">
+    <table class="leaderboard-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Minutes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% let rank=1 %>
+                <% clients.forEach((client)=> { %>
+                    <tr>
+                        <td>
+                            <%= rank %>
+                        </td>
+                        <td>
+                            <%= client.name %>
+                        </td>
+                        <td>
+                            <%= client.minutes %>
+                        </td>
+                    </tr>
+                    <% rank++ }) %>
+        </tbody>
+    </table>
+</div>
