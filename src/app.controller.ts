@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Redirect, Render } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 
@@ -12,4 +12,8 @@ export class AppController {
   async getLeaderboard() {
     return  {clients: await this.appService.getLeaderByConnectiontime(parseInt(this.configService.get("LEADERBOARD_LENGTH")))}
   }
+
+  @Get("/")
+  @Redirect("/leaderboard")
+  pass() {}
 }
