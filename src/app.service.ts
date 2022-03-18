@@ -34,16 +34,17 @@ export class AppService {
     const clientList = await query.send("clientlist", {});
 
 
-    for (let client of clientList.response) {
+    for (const client of clientList.response) {
       // Exclude query clients
       if (client.client_type !== 1) {
 
         const clientInfo = await query.send("clientinfo", { clid: client.clid});
         
-        let dbclient = await this.clientModel.findOneAndUpdate({
+        const dbclient = await this.clientModel.findOneAndUpdate({
           teamspeakID: clientInfo.response[0].client_unique_identifier},
           {$inc : {'minutes' : 1}, name: clientInfo.response[0].client_nickname}
         ).exec()
+        
         if (!dbclient){
           const newClient = await this.clientModel.create(
             {
@@ -60,6 +61,6 @@ export class AppService {
 
   async getLeaderByConnectiontime(amount: number): Promise<Client[]>{
     this.logger.debug(`Getting top ${amount} clients from database`)
-    return await this.clientModel.find().sort({minutes: -1}).limit(amount)   
+    return await this.clientModel.find().sort({minutes: -1}).limit(amount)  
   }
 }

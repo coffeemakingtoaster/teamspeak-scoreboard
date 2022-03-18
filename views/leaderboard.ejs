@@ -1,4 +1,4 @@
-<header>
+<head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Rubik:wght@700&display=swap"
@@ -44,33 +44,49 @@
             padding: 12px 15px;
         }
     </style>
-</header>
+    <script>
+        function timeConvert(minutes) {
+            var d = Math.floor(minutes / (360 * 24));
+            var h = Math.floor(minutes % (360 * 24) / 360);
+            var m = Math.floor(seconds % 360 / 60);
 
-<h1>HiloHDLP Teamspeak Leaderboard</h1>
-<div class="leaderboard-container">
-    <table class="leaderboard-table">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Minutes</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% let rank=1 %>
-                <% clients.forEach((client)=> { %>
-                    <tr>
-                        <td>
-                            <%= rank %>
-                        </td>
-                        <td>
-                            <%= client.name %>
-                        </td>
-                        <td>
-                            <%= client.minutes %>
-                        </td>
-                    </tr>
-                    <% rank++ }) %>
-        </tbody>
-    </table>
-</div>
+            return d + " days, " + h + " hours, " + m + " minutes";
+        }
+
+    </script>
+</head>
+
+<body>
+    <h1>HiloHDLP Teamspeak Leaderboard</h1>
+    <div class="leaderboard-container">
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Time (dd:hh:mm)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let rank=1 %>
+                    <% clients.forEach((client)=> { %>
+                        <% const d = Math.floor(client.minutes / (24*60)); %>
+                        <% const h = Math.floor((client.minutes / 60) % (24));  %>
+                        <% const m = Math.floor(client.minutes % 60);  %>
+                        <% const displayTime = ('0' + d).slice(-2) + " :" + ('0' + h).slice(-2) + " :" + ('0' + m).slice(-2)  %>
+                        <tr>
+                            <td>
+                                <%= rank %>
+                            </td>
+                            <td>
+                                <%= client.name %>
+                            </td>
+                            <td>
+                                <%=displayTime%>
+                            </td>
+                        </tr>
+                        <% rank++ }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
