@@ -39,6 +39,16 @@ export class AppService {
       if (client.client_type !== 1) {
 
         const clientInfo = await query.send("clientinfo", { clid: client.clid});
+
+        if (clientInfo.response[0].client_idle_time >= 180000) {
+          this.logger.debug(`Client ${clientInfo.response[0].client_nickname} has been idle for more than 3 minutes`)
+          // This should never occur for a client that does not yet exist in DB
+          const dbclient = await this.clientModel.findOneAndUpdate({
+            teamspeakID: clientInfo.response[0].client_unique_identifier},
+            {$inc : {'idle_warns' : 1}}
+          ).exec()
+          continue
+        }
         
         const dbclient = await this.clientModel.findOneAndUpdate({
           teamspeakID: clientInfo.response[0].client_unique_identifier},
