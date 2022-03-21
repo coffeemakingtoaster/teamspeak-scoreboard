@@ -11,6 +11,9 @@ export class Client {
 
   @Prop({default: 0})
   minutes: number;
+
+  @Prop({default: 0})
+  idle_warns: number;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client)
