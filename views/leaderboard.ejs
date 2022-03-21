@@ -65,6 +65,7 @@
                     <th>Rank</th>
                     <th>Name</th>
                     <th>Time (dd:hh:mm)</th>
+                    <th>AFK-Warns</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,6 +84,9 @@
                             </td>
                             <td>
                                 <%=displayTime%>
+                            </td>
+                            <td>
+                                <%= client.idle_warn %>
                             </td>
                         </tr>
                         <% rank++ }) %>
