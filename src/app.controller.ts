@@ -1,4 +1,4 @@
-import { Controller, Get, Redirect, Render } from '@nestjs/common';
+import { Controller, Get, Query, Redirect, Render } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 
@@ -16,4 +16,12 @@ export class AppController {
   @Get("/")
   @Redirect("/leaderboard")
   pass() {}
+
+  @Get('/api/leaderboard')
+  async getLeaderboardAPI(@Query('amount') amount: number) {
+    if (amount === undefined) {
+      amount = parseInt(this.configService.get("LEADERBOARD_LENGTH"))
+    }
+    return {clients: await this.appService.getLeaderByConnectiontime(amount)}
+  }
 }
