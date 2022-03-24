@@ -33,34 +33,59 @@ export class AppService {
 
     const clientList = await query.send("clientlist", {});
 
+    const client_infos = []
 
-    for (const client of clientList.response) {
+    for (const client of clientList.response){
+
+      if (client.client_type === 1){
+        continue
+      }
+
+      const clientInfo = await query.send("clientinfo", { clid: client.clid});
+      if (!clientInfo){
+        this.logger.error(`Error getting clientinfo for ${client.client_nickname}`)
+        continue
+      }
+      client_infos.push(clientInfo.response[0])
+    }
+
+    console.log(client_infos)
+    
+
+    for (const client of client_infos) {
       // Exclude query clients
       if (client.client_type !== 1) {
 
-        const clientInfo = await query.send("clientinfo", { clid: client.clid});
-
-        if (clientInfo.response[0].client_idle_time >= 180000) {
-          this.logger.debug(`Client ${clientInfo.response[0].client_nickname} has been idle for more than 3 minutes`)
+        // Add afk minute
+        if (client.client_idle_time >= 180000) {
+          this.logger.debug(`Client ${client.client_nickname} has been idle for more than 3 minutes`)
           // This should never occur for a client that does not yet exist in DB
           const dbclient = await this.clientModel.findOneAndUpdate({
-            teamspeakID: clientInfo.response[0].client_unique_identifier},
+            teamspeakID: client.client_unique_identifier},
             {$inc : {'idle_warns' : 1}}
           ).exec()
           continue
         }
-        
+
+        console.log(client_infos.filter(c => c.client_channel_group_inherited_channel_id === client.client_channel_group_inherited_channel_id).length)
+
+        // Client is not afk but alone in channel => counts as idle and therefore no minutes added
+        if (client_infos.filter(c => c.client_channel_group_inherited_channel_id === client.client_channel_group_inherited_channel_id).length <= 2) {
+          this.logger.debug(`Client ${client.client_nickname} is alone in channel`)
+          continue
+        }
+      
         const dbclient = await this.clientModel.findOneAndUpdate({
-          teamspeakID: clientInfo.response[0].client_unique_identifier},
-          {$inc : {'minutes' : 1}, name: clientInfo.response[0].client_nickname}
+          teamspeakID: client.client_unique_identifier},
+          {$inc : {'minutes' : 1}, name: client.client_nickname}
         ).exec()
         
         if (!dbclient){
           const newClient = await this.clientModel.create(
             {
-              teamspeakID: clientInfo.response[0].client_unique_identifier,
+              teamspeakID: client.client_unique_identifier,
               minutes: 1,
-              name: clientInfo.response[0].client_nickname
+              name: client.client_nickname
             })
           await newClient.save()
         }
